@@ -1,3 +1,3 @@
 mamp-site-starter
 =================
-A bash script to creates vhost and /etc/hosts file entries for local sites
+A bash script to create vhost and /etc/hosts config entries for local sites
