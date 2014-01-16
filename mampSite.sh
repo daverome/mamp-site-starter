@@ -9,7 +9,7 @@ echo "Enter the dev URL (e.g. sitename.dev) of the site you'd like to create, fo
 read site_url
 
 # Redisplay site name and prompt to continue
-echo "You entered $site is that correct? [Y/N]"
+echo "You entered $site_url is that correct? [Y/N]"
 read is_correct
 
 if [ "$is_correct" == "Y" ] || [ "$is_correct" == "y" ] ; then
@@ -59,25 +59,32 @@ EOF
         read install_wordpress
 
         if [ "$install_wordpress" == "Y" ] || [ "$install_wordpress" == "y" ] ; then
-            echo "Installing Wordpress"
+            echo "Downloading Wordpress"
 
             # Go to the site directory
             cd $SITE_DIR
 
-            # Get the Wordpress install files
-            # wget http://wordpress.org/latest.zip && unzip "$SITE_DIR/latest.zip"
+            # Get the latest version of Wordpress and unzip when the download is complete
+            curl -O http://wordpress.org/latest.zip && unzip "$SITE_DIR/latest.zip"
 
             # The zip file was successfully unzip and wordpress directory exists
             if [ -d "$SITE_DIR/wordpress" ] ; then
-                echo ""
-                # Go to wordpress directory and move everything to the root
-                #cd "$SITE_DIR/wordpress" && mv * ../
+                echo "Moving Wordpress files to the site root"
+
+                # Go to wordpress directory and move everything to the site root
+                cd "$SITE_DIR/wordpress" && mv * ../
+
                 # Go back to site root
-                #cd ..
+                cd ..
+
                 # Remove empty wordpress directory
-                #rmdir "$SITE_DIR/wordpress"
+                rmdir "$SITE_DIR/wordpress"
+
                 # Remove wordpress zip file
-                #rm "$SITE_DIR/latest.zip"
+                rm "$SITE_DIR/latest.zip"
+
+                # Create a copy of the config file
+                cp ./wp-config-sample.php ./wp-config.php
             fi
 
         else
@@ -102,10 +109,9 @@ EOF
 
         fi
 
-        echo "Don't forget to restart apache"
-
     fi
 
 fi
 
 echo "Done!"
+echo "Don't forget to restart apache"
